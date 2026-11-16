@@ -7,19 +7,6 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $posts = \App\Models\Post::with('user')
-        ->withCount('comments')
-        ->latest()
-        ->get();
-
-    return view('home', compact('posts'));
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()

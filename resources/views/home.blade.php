@@ -1,6 +1,5 @@
 <x-app-layout>
-    <main class="main-content">
-        <header class="top-header">
+    <header class="top-header">
             <label for="menu-toggle" class="menu-toggle-btn" aria-label="Buka Menu">
                 <i class="fa-solid fa-bars"></i>
             </label>
@@ -8,14 +7,14 @@
                 <a href="#" class="tab active">For you</a>
                 <a href="#" class="tab">Following</a>
             </div>
-        </header>
+    </header>
 
-        <div class="container">
+    <div class="container">
             @forelse ($posts as $post)
             <article class="tweet-card" style="cursor: pointer;">
                 <div onclick="window.location.href='{{ route('posts.show', $post->id) }}';" class="click-post" style="display:block;">
                     <div class="post-header">
-                        <img src="{{ asset($post->user->profile_pic ?? 'assets/IMG/default-avatar.png') }}" class="avatar" alt="Avatar">
+                        <img src="{{ $post->user->profile_pic ?: asset('assets/IMG/jaki.jpg') }}" class="avatar" alt="Avatar">
                         <div class="post-user-info">
                             <div class="name">{{ $post->user->username }}</div>
                             <div class="handle">{{ '@' . $post->user->username }} • {{ $post->created_at->diffForHumans() }}</div>
@@ -57,8 +56,8 @@
             @empty
             <div class="empty-state">
                 <p>Belum ada curhatan. Jadilah yang pertama!</p>
+                <a href="{{ route('posts.create') }}" class="btn submit" style="margin-top: 16px;">Create Post</a>
             </div>
             @endforelse
-        </div>
-    </main>
+    </div>
 </x-app-layout>

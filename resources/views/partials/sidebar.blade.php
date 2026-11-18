@@ -42,7 +42,7 @@
             <i class="fa-solid fa-chart-simple"></i>
             <span>Leaderboard</span>
         </a>
-        <a href="{{ route('profile.edit') }}" class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+        <a href="{{ $user ? route('profile.show', $user->username) : route('login') }}" class="nav-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
             <i class="fa-regular fa-user"></i>
             <span>Profile</span>
         </a>

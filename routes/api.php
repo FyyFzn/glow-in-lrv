@@ -14,8 +14,14 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update']);
+
+    // Any user's public profile
+    Route::get('/users/{user:username}', [ProfileController::class, 'showUser']);
 });
 
 
 // API routes handle the actual data transactions
-Route::apiResource('posts', PostController::class)->middleware('auth:sanctum');
+// Namespaced route names so they do not collide with the web posts.* routes.
+Route::apiResource('posts', PostController::class)
+    ->names('api.posts')
+    ->middleware('auth:sanctum');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -15,7 +16,21 @@ class ProfileController extends Controller
      */
     public function show(Request $request): JsonResponse
     {
-        return response()->json($request->user());
+        $user = $request->user()
+            ->loadCount(['posts', 'followers', 'following'])
+            ->load('posts');
+
+        return response()->json($user);
+    }
+
+    /**
+     * Display another user's public profile.
+     */
+    public function showUser(User $user): JsonResponse
+    {
+        $user->loadCount(['posts', 'followers', 'following'])->load('posts');
+
+        return response()->json($user);
     }
 
     /**
@@ -49,7 +64,7 @@ class ProfileController extends Controller
             'header_pic' => ['sometimes', 'nullable', 'string', 'max:2048'],
         ]);
 
-        $user->fill($validated);
+        $user->fill(Arr::only($validated, ['name', 'username', 'email']));
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -57,6 +72,13 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return response()->json($user->fresh());
+        $user->profile()->updateOrCreate(
+            [],
+            Arr::only($validated, ['bio', 'location', 'profile_pic', 'header_pic'])
+        );
+
+        return response()->json(
+            $user->fresh()->loadCount(['posts', 'followers', 'following'])
+        );
     }
 }

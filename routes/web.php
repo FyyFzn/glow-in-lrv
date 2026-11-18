@@ -17,7 +17,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
-    // Breeze default profile routes
+    // Public profile pages
+    Route::get('/u/{user:username}', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/u/{user:username}/follow', [ProfileController::class, 'follow'])->name('profile.follow');
+    Route::delete('/u/{user:username}/follow', [ProfileController::class, 'unfollow'])->name('profile.unfollow');
+
+    // Breeze default profile settings routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

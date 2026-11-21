@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -29,34 +30,50 @@ class PostController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource (Post Detail with Comments).
      */
-    public function show(string $id)
+    public function show(Post $post)
     {
-        //
+        $post->load(['user', 'comments.user'])->loadCount('comments');
+
+        return view('comments.detail', compact('post'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        abort_unless(auth()->id() === $post->user_id, 403);
+
+        return view('posts.edit', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        abort_unless(auth()->id() === $post->user_id, 403);
+
+        $validated = $request->validate([
+            'content' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $post->update($validated);
+
+        return redirect()->route('posts.show', $post)->with('status', 'Post updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        //
+        abort_unless(auth()->id() === $post->user_id, 403);
+
+        $post->delete();
+
+        return redirect()->route('home')->with('status', 'Post deleted');
     }
 }

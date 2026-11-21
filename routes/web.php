@@ -4,6 +4,8 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
@@ -18,6 +20,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+    // Detail alias
+    Route::get('/detail', function (Request $request) {
+        $postId = $request->query('id', $request->query('post_id', 1));
+        $post = Post::with(['user', 'comments.user'])->withCount('comments')->find($postId);
+
+        if (! $post) {
+            $post = Post::firstOrCreate(
+                ['id' => 1],
+                [
+                    'user_id' => auth()->id() ?? 1,
+                    'content' => 'Mock Post: This post serves as the host for demonstrating the Comment CRUD API and Frontend.',
+                ]
+            );
+            $post->load(['user', 'comments.user'])->loadCount('comments');
+        }
+
+        return view('comments.detail', compact('post'));
+    })->name('detail');
 
     // Public profile pages
     Route::get('/u/{user:username}', [ProfileController::class, 'show'])->name('profile.show');
@@ -38,5 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/chat/message/{id}', [ChatController::class, 'update'])->name('chat.update');
     Route::delete('/chat/message/{id}', [ChatController::class, 'destroy'])->name('chat.destroy');
 });
+
+Route::redirect('/dashboard', '/')->name('dashboard');
 
 require __DIR__.'/auth.php';

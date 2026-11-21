@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Http\Request;
@@ -25,3 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('posts', PostController::class)
     ->names('api.posts')
     ->middleware('auth:sanctum');
+
+// Comments API routes
+Route::apiResource('comments', CommentController::class);

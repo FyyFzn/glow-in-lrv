@@ -118,6 +118,16 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
     public function isFollowedBy(?User $user): bool
     {
         return $user !== null && $this->followers()->whereKey($user->id)->exists();

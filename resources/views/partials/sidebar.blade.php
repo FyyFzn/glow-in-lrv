@@ -34,7 +34,7 @@
             </div>
             <span>Notifications</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
             <i class="fa-regular fa-envelope"></i>
             <span>Messages</span>
         </a>
@@ -42,7 +42,7 @@
             <i class="fa-solid fa-chart-simple"></i>
             <span>Leaderboard</span>
         </a>
-        <a href="{{ $user ? route('profile.show', $user->username) : route('login') }}" class="nav-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
+        <a href="{{ route('profile.edit') }}" class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fa-regular fa-user"></i>
             <span>Profile</span>
         </a>
@@ -61,7 +61,7 @@
                 <i class="fa-solid fa-ellipsis menu-dots"></i>
             </button>
             <div class="post-dropdown-content" style="bottom: 100%; top: auto; right: 0; margin-bottom: 10px; min-width: 120px;">
-                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                <form method="POST" action="{{ route('logout') }}" style="margin:0;">
                     @csrf
                     <button type="submit" style="color: #ff4757;">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
